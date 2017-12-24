@@ -1,7 +1,33 @@
+/* UTILITIES */
 * {
   box-sizing: border-box;
 }
 
+button {
+  cursor: pointer;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.full {
+  height: 100%;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+/* TYPO */
+body {
+  font-family: "Helvetica";
+}
+
+/* CONTAINER */
 .container {
   margin-right: auto;
   margin-left: auto;
@@ -34,12 +60,18 @@
   }
 }
 
+/* IDEA CONTAINER */
 #ideas-container {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -10px;
 }
 
+#ideas-container span {
+  margin: 20px 10px;
+}
+
+/* IDEA */
 .idea {
   background-color: #EEE;
   margin: 10px;
@@ -79,3 +111,34 @@ input:focus, textarea:focus {
 .idea:hover .idea-delete-button {
   visibility: visible;
 }
+
+/* NEW IDEA FORM */
+.idea-save-button {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
+.idea-cancel-button {
+  position: absolute;
+  bottom: 10px;
+  left: 55px;
+}
+
+#new-idea-button {
+  cursor: pointer;
+}
+
+#new-idea-form {
+  margin: 10px;
+}
+
+.new-idea-container {
+  padding: 0;
+  transition: 0.2s;
+}
+
+.new-idea-container:hover span {
+  text-decoration: underline;
+}
+
