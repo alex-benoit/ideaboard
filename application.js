@@ -1,4 +1,5 @@
-const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
+// const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
+const apiUrl = 'http://localhost:3000';
 const containerId = 'ideas-container';
 
 const buildIdea = ({ id, title, body }) => {
@@ -38,12 +39,24 @@ const toggleNewIdeaForm = () => {
   ideaTitleInput.focus();
 };
 
+const deleteIdea = (event) => {
+  const ideaElement = event.target.parentElement;
+  const ideaId = ideaElement.dataset.ideaId;
+  const confirmation = window.confirm('Are you sure you want to delete this idea?');
+  if (confirmation) {
+    fetch(`${apiUrl}/ideas/${ideaId}`, { method: 'delete' })
+      .then(ideaElement.remove());
+  }
+};
+
 const addEventListeners = () => {
   const newIdeaButton = document.getElementById('new-idea-button');
   const cancelNewIdeaButton = document.querySelector('.idea-cancel-button');
+  const ideasDeleteButtons = document.querySelectorAll('.idea-delete-button');
 
   newIdeaButton.addEventListener('click', toggleNewIdeaForm);
   cancelNewIdeaButton.addEventListener('click', toggleNewIdeaForm);
+  ideasDeleteButtons.forEach(button => button.addEventListener('click', deleteIdea));
 };
 
 const fetchIdeas = () => {
