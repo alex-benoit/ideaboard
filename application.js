@@ -1,3 +1,4 @@
+// TODO validation on forms?
 // const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
 const apiUrl = 'http://localhost:3000';
 const containerId = 'ideas-container';
@@ -40,6 +41,9 @@ const toggleNewIdeaForm = () => {
 };
 
 const deleteIdea = (event) => {
+  if (!event.target.classList.contains('idea-delete-button')) {
+    return;
+  }
   const ideaElement = event.target.parentElement;
   const ideaId = ideaElement.dataset.ideaId;
   const confirmation = window.confirm('Are you sure you want to delete this idea?');
@@ -49,14 +53,36 @@ const deleteIdea = (event) => {
   }
 };
 
+const createIdea = () => {
+  const newIdeaTitle = document.querySelector('.idea-title').value;
+  const newIdeaBody = document.querySelector('.idea-body').value
+  const requestBody = JSON.stringify({ title: newIdeaTitle, body: newIdeaBody })
+
+  fetch(`${apiUrl}/ideas`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: requestBody
+  })
+    .then(response => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+};
+
 const addEventListeners = () => {
   const newIdeaButton = document.getElementById('new-idea-button');
-  const cancelNewIdeaButton = document.querySelector('.idea-cancel-button');
-  const ideasDeleteButtons = document.querySelectorAll('.idea-delete-button');
-
   newIdeaButton.addEventListener('click', toggleNewIdeaForm);
+
+  const cancelNewIdeaButton = document.querySelector('.idea-cancel-button');
   cancelNewIdeaButton.addEventListener('click', toggleNewIdeaForm);
-  ideasDeleteButtons.forEach(button => button.addEventListener('click', deleteIdea));
+
+  const ideasContainer = document.getElementById('ideas-container');
+  ideasContainer.addEventListener('click', deleteIdea);
+
+  const saveNewIdeaButton = document.querySelector('.idea-save-button');
+  saveNewIdeaButton.addEventListener('click', createIdea);
 };
 
 const fetchIdeas = () => {
