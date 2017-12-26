@@ -1,6 +1,6 @@
 // TODO validation on forms?
 // TODO responsive
-
+// TODO no update if input textarea is empty
 // const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
 const apiUrl = 'http://localhost:3000';
 const containerId = 'ideas-container';
@@ -33,11 +33,15 @@ const buildBlankIdea = () => {
 
 const handleErrors = (response) => {
   if (!response.ok) {
-    throw Error(response.statusText);
+    throw Error(`${response.statusText} (${response.status})`);
   }
   return response;
 };
 
+const notify = (message, error) => {
+  const notificationsContianer = document.querySelector('.note-container');
+  notificationsContianer.innerHTML = `<div class='note${error ? ' error' : ''}'>${message}<div>`;
+};
 
 const toggleNewIdeaForm = () => {
   const newIdeaForm = document.getElementById('new-idea-form');
@@ -68,9 +72,9 @@ const createIdea = () => {
       newIdeaTitle.value = '';
       newIdeaBody.value = '';
       toggleNewIdeaForm();
+      notify(`${data.title} created successfully!`, false);
     })
-    // ADD NOTIFICATION HERE
-    .catch(error => console.log('There was an error!', error));
+    .catch(error => notify(error, true));
 };
 
 const getUpdateRequestBody = (event) => {
@@ -82,6 +86,10 @@ const getUpdateRequestBody = (event) => {
 };
 
 const updateIdea = (event) => {
+  if (!event.target.classList.contains('idea-title') && !event.target.classList.contains('idea-body')) {
+    return;
+  }
+
   const ideaElement = event.target.parentElement;
   const ideaId = ideaElement.dataset.ideaId;
   const requestBody = getUpdateRequestBody(event);
@@ -92,9 +100,9 @@ const updateIdea = (event) => {
     body: requestBody
   })
     .then(handleErrors)
-    // .then()
-    // ADD NOTIFICATION HERE
-    .catch(error => console.log('There was an error!', error));
+    .then(response => response.json())
+    .then(data => notify(`${data.title} updated successfully!`, false))
+    .catch(error => notify(error, true));
 };
 
 const deleteIdea = (event) => {
@@ -111,9 +119,17 @@ const deleteIdea = (event) => {
       method: 'DELETE'
     })
       .then(handleErrors)
-      .then(() => ideaElement.remove())
-      .catch(error => console.log('There was an error!', error));
+      .then(response => response.json())
+      .then((data) => {
+        ideaElement.remove();
+        notify(`${data.title} deleted successfully!`, false);
+      })
+      .catch(error => notify(error, true));
   }
+};
+
+const handleFilterChange = (event) => {
+  fetchIdeas(event.target.selectedOptions[0].value);
 };
 
 const addEventListeners = () => {
@@ -129,13 +145,17 @@ const addEventListeners = () => {
 
   const saveNewIdeaButton = document.querySelector('.idea-save-button');
   saveNewIdeaButton.addEventListener('click', createIdea);
+
+  const filterSelect = document.getElementById('filter-select');
+  filterSelect.addEventListener('change', handleFilterChange);
 };
 
-const fetchIdeas = () => {
+
+const fetchIdeas = (order) => {
   const container = document.getElementById(containerId);
   let ideas = '';
   ideas += buildBlankIdea();
-  fetch(`${apiUrl}/ideas`)
+  fetch(`${apiUrl}/ideas?order=${order}`)
     .then(handleErrors)
     .then(response => response.json())
     .then((data) => {
@@ -145,7 +165,7 @@ const fetchIdeas = () => {
       container.innerHTML = ideas;
       addEventListeners();
     })
-    .catch(error => console.log('There was an error!', error));
+    .catch(error => notify(error, true));
 };
 
-document.addEventListener('DOMContentLoaded', fetchIdeas);
+document.addEventListener('DOMContentLoaded', () => fetchIdeas('created_at'));

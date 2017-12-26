@@ -4,7 +4,6 @@
     "comma-dangle": "off",
     "arrow-body-style": 0,
     "space-before-function-paren": 0,
-    "no-console": "off",
     "no-alert": "off"
   },
   "env": {

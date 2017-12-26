@@ -7,14 +7,15 @@
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
+    <div class="note-container"></div>
     <div class="container">
       <div class="header flex-split">
         <h1>IdeaBoard</h1>
         <div>
           <span>Sort by</span>
-          <select name="" id="">
-            <option value="">Title</option>
-            <option value="">Latest</option>
+          <select id="filter-select">
+            <option value="created_at">Latest</option>
+            <option value="title">Title</option>
           </select>
         </div>
       </div>
