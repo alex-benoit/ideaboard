@@ -1,6 +1,7 @@
 // TODO validation on forms?
 // TODO responsive
 // TODO no update if input textarea is empty
+
 // const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
 const apiUrl = 'http://localhost:3000';
 const containerId = 'ideas-container';
@@ -23,7 +24,8 @@ const buildBlankIdea = () => {
       </div>
       <div class="hidden" id="new-idea-form">
         <input type="text" class="new-idea-title" placeholder="Product Hunt">
-        <textarea class="new-idea-body" rows="5" placeholder="Daily curation of the best new products"></textarea>
+        <textarea class="new-idea-body" rows="5" maxlength="140" placeholder="Daily curation of the best new products"></textarea>
+        <span id="char-count"></span>
         <button class="idea-save-button">Save</button>
         <button class="idea-cancel-button">Cancel</button>
       </div>
@@ -132,6 +134,16 @@ const handleFilterChange = (event) => {
   fetchIdeas(event.target.selectedOptions[0].value);
 };
 
+const handleNewIdeaBodyChange = (event) => {
+  const charCount = document.getElementById('char-count');
+
+  if (event.target.value.length >= 125) {
+    charCount.innerText = `${140 - event.target.value.length} characters remaining`;
+  } else {
+    charCount.innerText = '';
+  }
+};
+
 const addEventListeners = () => {
   const newIdeaButton = document.getElementById('new-idea-button');
   newIdeaButton.addEventListener('click', toggleNewIdeaForm);
@@ -148,6 +160,9 @@ const addEventListeners = () => {
 
   const filterSelect = document.getElementById('filter-select');
   filterSelect.addEventListener('change', handleFilterChange);
+
+  const newIdeaBody = document.querySelector('.new-idea-body');
+  newIdeaBody.addEventListener('input', handleNewIdeaBodyChange);
 };
 
 

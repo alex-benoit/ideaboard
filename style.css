@@ -105,10 +105,6 @@ body {
   margin: 0 -10px;
 }
 
-#ideas-container span {
-  margin: 20px 10px;
-}
-
 /* IDEA */
 .idea {
   background-color: #EEE;
@@ -180,8 +176,15 @@ input:focus, textarea:focus {
   padding: 0;
 }
 
-.new-idea-container:hover span {
+#new-idea-button:hover span {
   text-decoration: underline;
+}
+
+#char-count {
+  font-size: 10px;
+  position: absolute;
+  bottom: 28px;
+  left: 13px;
 }
 
 /* NOTIFICATION */
