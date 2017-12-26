@@ -2,12 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IdeaBoard</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <div class="container">
-      <h1>IdeaBoard</h1>
+      <div class="header flex-split">
+        <h1>IdeaBoard</h1>
+        <div>
+          <span>Sort by</span>
+          <select name="" id="">
+            <option value="">Title</option>
+            <option value="">Latest</option>
+          </select>
+        </div>
+      </div>
+
+      <hr>
       <div id="ideas-container"></div>
     </div>
     <script src="application.js"></script>

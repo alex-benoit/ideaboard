@@ -7,10 +7,28 @@ button {
   cursor: pointer;
 }
 
+hr {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border: 0;
+  border-top: 1px solid #EEE;
+}
+
+select {
+  height: 28px;
+  width: 100px;
+}
+
 .flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.flex-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .full {
@@ -56,8 +74,22 @@ body {
 
 @media (min-width: 1200px) {
   .container {
-    max-width: 1140px;
+    max-width: 1030px;
   }
+}
+
+/* HEADER */
+.header {
+  margin-top: 35px;
+  margin-bottom: 20px;
+}
+
+.header span {
+  font-size: 13px;
+}
+
+.header h1 {
+  margin: 0px;
 }
 
 /* IDEA CONTAINER */
@@ -82,7 +114,7 @@ body {
   border-radius: 3px;
 }
 
-.idea-title {
+.idea-title, .new-idea-title {
   font-size: 16px;
 }
 
@@ -103,7 +135,7 @@ input:focus, textarea:focus {
 
 .idea-delete-button {
   position: absolute;
-  bottom: 10px;
+  bottom: 8px;
   right: 10px;
   visibility: hidden;
 }
@@ -115,13 +147,13 @@ input:focus, textarea:focus {
 /* NEW IDEA FORM */
 .idea-save-button {
   position: absolute;
-  bottom: 10px;
+  bottom: 8px;
   left: 10px;
 }
 
 .idea-cancel-button {
   position: absolute;
-  bottom: 10px;
+  bottom: 8px;
   left: 55px;
 }
 
