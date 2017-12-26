@@ -1,9 +1,7 @@
-// TODO validation on forms?
 // TODO responsive
-// TODO no update if input textarea is empty
 
-// const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
-const apiUrl = 'http://localhost:3000';
+const apiUrl = 'https://ideaboard-rails-api.herokuapp.com';
+// const apiUrl = 'http://localhost:3000';
 const containerId = 'ideas-container';
 
 const buildIdea = ({ id, title, body }) => {
@@ -22,11 +20,13 @@ const buildBlankIdea = () => {
       <div class="flex-center full" id="new-idea-button">
         <span>Add New Idea</span>
       </div>
-      <div class="hidden" id="new-idea-form">
-        <input type="text" class="new-idea-title" placeholder="Product Hunt">
-        <textarea class="new-idea-body" rows="5" maxlength="140" placeholder="Daily curation of the best new products"></textarea>
+      <div class="hidden" id="new-idea-form-container">
+        <form action="#" id="new-idea-form">
+          <input type="text" required class="new-idea-title" placeholder="Product Hunt">
+          <textarea class="new-idea-body" required rows="5" maxlength="140" placeholder="Daily curation of the best new products"></textarea>
+          <button type="submit" class="idea-save-button">Save</button>
+        </form>
         <span id="char-count"></span>
-        <button class="idea-save-button">Save</button>
         <button class="idea-cancel-button">Cancel</button>
       </div>
     </div>
@@ -46,17 +46,19 @@ const notify = (message, error) => {
 };
 
 const toggleNewIdeaForm = () => {
-  const newIdeaForm = document.getElementById('new-idea-form');
+  const newIdeaFormContainer = document.getElementById('new-idea-form-container');
   const newIdeaButton = document.getElementById('new-idea-button');
 
-  newIdeaForm.classList.toggle('hidden');
+  newIdeaFormContainer.classList.toggle('hidden');
   newIdeaButton.classList.toggle('hidden');
 
   const ideaTitleInput = document.querySelector('.new-idea-title');
   ideaTitleInput.focus();
 };
 
-const createIdea = () => {
+const createIdea = (event) => {
+  event.preventDefault();
+
   const newIdeaTitle = document.querySelector('.new-idea-title');
   const newIdeaBody = document.querySelector('.new-idea-body');
   const newIdeaContainer = document.querySelector('.new-idea-container');
@@ -79,12 +81,11 @@ const createIdea = () => {
     .catch(error => notify(error, true));
 };
 
-const getUpdateRequestBody = (event) => {
-  if (event.target.classList.contains('idea-title')) {
-    return JSON.stringify({ title: event.target.value });
-  } else if (event.target.classList.contains('idea-body')) {
-    return JSON.stringify({ body: event.target.value });
+const checkInputValidity = (input) => {
+  if (input.value.trim() !== '') {
+    return true;
   }
+  return false;
 };
 
 const updateIdea = (event) => {
@@ -92,9 +93,22 @@ const updateIdea = (event) => {
     return;
   }
 
+  const valid = checkInputValidity(event.target);
+  if (!valid) {
+    notify("Can't be blank!", true);
+    event.target.focus();
+    return;
+  }
+
   const ideaElement = event.target.parentElement;
   const ideaId = ideaElement.dataset.ideaId;
-  const requestBody = getUpdateRequestBody(event);
+  let requestBody;
+
+  if (event.target.classList.contains('idea-title')) {
+    requestBody = JSON.stringify({ title: event.target.value });
+  } else if (event.target.classList.contains('idea-body')) {
+    requestBody = JSON.stringify({ body: event.target.value });
+  }
 
   fetch(`${apiUrl}/ideas/${ideaId}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -130,6 +144,19 @@ const deleteIdea = (event) => {
   }
 };
 
+const enforceInputValidations = (event) => {
+  if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+    // debugger
+    return;
+  }
+
+  if (event.target.value.trim() === '') {
+    event.target.classList.add('error');
+  } else {
+    event.target.classList.remove('error');
+  }
+};
+
 const handleFilterChange = (event) => {
   fetchIdeas(event.target.selectedOptions[0].value);
 };
@@ -154,9 +181,10 @@ const addEventListeners = () => {
   const ideasContainer = document.getElementById('ideas-container');
   ideasContainer.addEventListener('click', deleteIdea);
   ideasContainer.addEventListener('focusout', updateIdea);
+  ideasContainer.addEventListener('input', enforceInputValidations);
 
-  const saveNewIdeaButton = document.querySelector('.idea-save-button');
-  saveNewIdeaButton.addEventListener('click', createIdea);
+  const newIdeaForm = document.getElementById('new-idea-form');
+  newIdeaForm.addEventListener('submit', createIdea);
 
   const filterSelect = document.getElementById('filter-select');
   filterSelect.addEventListener('change', handleFilterChange);
