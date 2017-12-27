@@ -146,7 +146,6 @@ const deleteIdea = (event) => {
 
 const enforceInputValidations = (event) => {
   if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
-    // debugger
     return;
   }
 
@@ -159,6 +158,7 @@ const enforceInputValidations = (event) => {
 
 const handleFilterChange = (event) => {
   fetchIdeas(event.target.selectedOptions[0].value);
+  window.history.pushState({}, '', `?order=${event.target.selectedOptions[0].value}`);
 };
 
 const handleNewIdeaBodyChange = (event) => {
@@ -193,6 +193,18 @@ const addEventListeners = () => {
   newIdeaBody.addEventListener('input', handleNewIdeaBodyChange);
 };
 
+const setInitialFilter = () => {
+  const filterSelect = document.getElementById('filter-select');
+  const queryString = new URLSearchParams(window.location.search);
+
+  if (queryString.get('order') === 'title') {
+    filterSelect.value = 'title';
+  } else {
+    filterSelect.value = 'created_at';
+  }
+
+  return filterSelect.value;
+};
 
 const fetchIdeas = (order) => {
   const container = document.getElementById(containerId);
@@ -211,4 +223,9 @@ const fetchIdeas = (order) => {
     .catch(error => notify(error, true));
 };
 
-document.addEventListener('DOMContentLoaded', () => fetchIdeas('created_at'));
+const initApp = () => {
+  const order = setInitialFilter();
+  fetchIdeas(order);
+};
+
+document.addEventListener('DOMContentLoaded', initApp);
